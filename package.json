@@ -1,0 +1,43 @@
+{
+  "name": "eslint-plugin-prop-types-shorthand",
+  "version": "0.0.0-development",
+  "author": "Julian Rosse",
+  "description": "Allows expanding React prop types from a shorthand form",
+  "main": "lib/index.js",
+  "scripts": {
+    "watch": "coffee -o lib/ -wc src/",
+    "build": "coffee -o lib/ -c src/",
+    "prepublish": "npm run build && npm run build-parser",
+    "test": "node_modules/mocha/bin/_mocha lib/tests/**/*.js",
+    "build-parser": "jison src/grammar.json -o lib/parser.js"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/helixbass/eslint-plugin-prop-types-shorthand"
+  },
+  "homepage": "https://github.com/helixbass/eslint-plugin-prop-types-shorthand",
+  "bugs": "https://github.com/helixbass/eslint-plugin-prop-types-shorthand/issues",
+  "keywords": [
+    "eslint",
+    "eslint-plugin",
+    "eslintplugin"
+  ],
+  "license": "MIT",
+  "peerDependencies": {
+    "eslint": ">=4.14.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.1",
+    "coffeescript": "^2.3.2",
+    "eslint": "^5.13.0",
+    "jison": "^0.4.18",
+    "mocha": "^5.2.0"
+  },
+  "dependencies": {
+    "eslint-plugin-react": "^7.12.4",
+    "lodash": "^4.17.11"
+  }
+}

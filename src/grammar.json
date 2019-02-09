@@ -1,0 +1,39 @@
+{
+  "lex": {
+    "rules": [
+      ["\\s+", "/* skip whitespace */"],
+      ["[a-zA-Z_]+", "return 'NAME'"],
+      ["!", "return '!'"],
+      ["\\[\\]", "return '[]'"],
+      ["\\[", "return '['"],
+      ["\\]", "return ']'"],
+      ["\\{\\}", "return '{}'"],
+      ["\\{", "return '{'"],
+      ["\\}", "return '}'"],
+      [":", "return ':'"],
+      [",", "return ','"],
+      ["$", "return 'EOF'"]
+    ]
+  },
+  "bnf": {
+    "Expression": [["e EOF", "return $1"]],
+    "OptRequired": [["", ""], ["!", "$$ = true"]],
+    "OptTrailingComma": [["", ""], [",", ""]],
+    "Property": [["NAME : e", "$$ = new yy.Property({name: $1, value: $3})"]],
+    "Properties": [
+      ["", ""],
+      ["Property", "$$ = [$1]"],
+      ["Properties , Property", "$$ = $1.concat($3)"]
+    ],
+    "e": [
+      ["NAME OptRequired", "$$ = new yy.Type({name: $1, required: $2})"],
+      ["[] OptRequired", "$$ = new yy.Type({name: 'array', required: $2})"],
+      ["[ e ] OptRequired", "$$ = new yy.ArrayOf({inner: $2, required: $4})"],
+      ["{} OptRequired", "$$ = new yy.Type({name: 'object', required: $2})"],
+      [
+        "{ Properties OptTrailingComma } OptRequired",
+        "$$ = new yy.Shape({properties: $2, required: $5})"
+      ]
+    ]
+  }
+}
