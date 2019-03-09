@@ -27,6 +27,21 @@ reportPropType = ({propType, context}) ->
     fix: (fixer) ->
       fixer.replaceText value, parse(value).print()
 
+isPropTypesInFlow = (node) ->
+  {parent} = node
+  return no unless parent.type is 'CallExpression' and node is parent.arguments[0]
+  {callee} = parent
+  return no unless callee.name in ['addPropTypes', 'setPropTypes']
+  yes
+
+isPropTypesInAssignment = (node) ->
+  {parent} = node
+  return unless parent.type is 'AssignmentExpression'
+  return unless parent.left.type is 'MemberExpression'
+  return unless parent.left.property.type is 'Identifier'
+  return unless parent.left.property.name is 'propTypes'
+  yes
+
 module.exports =
   meta:
     docs:
@@ -37,7 +52,10 @@ module.exports =
     fixable: yes
 
   create: Components.detect (context, components) ->
+    alreadyChecked = []
     checkPropType = (propType) ->
+      return if propType.node in alreadyChecked
+      alreadyChecked.push propType.node
       {node: {value}} = propType
       return unless isStringLiteral value
       reportPropType {propType, context}
@@ -49,11 +67,8 @@ module.exports =
       list = components.list()
       checkPropTypes(component) for _, component of list
 
-    CallExpression: ({callee, arguments: args}) ->
-      return unless callee.name in ['addPropTypes', 'setPropTypes']
-      return unless args.length > 0
-      [propTypes] = args
-      return unless propTypes.type is 'ObjectExpression'
+    ObjectExpression: (node) ->
+      return unless isPropTypesInFlow(node) or isPropTypesInAssignment node
       checkPropTypes
         declaredPropTypes:
-          {name: property.key.name, node: property} for property in propTypes.properties when property.key.type is 'Identifier'
+          {name: property.key.name, node: property} for property in node.properties when property.key.type is 'Identifier'

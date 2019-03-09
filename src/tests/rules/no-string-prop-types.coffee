@@ -303,6 +303,52 @@ tests =
       )
     '''
     errors: [error('a')]
+  ,
+    # flow()
+    code: '''
+      const Foo = flow(
+        addProps({a: 'b'}),
+        ({a}) => <div>{a}</div>
+      )
+
+      Foo.propTypes = {
+        a: 'string',
+      }
+    '''
+    output: '''
+      const Foo = flow(
+        addProps({a: 'b'}),
+        ({a}) => <div>{a}</div>
+      )
+
+      Foo.propTypes = {
+        a: PropTypes.string,
+      }
+    '''
+    errors: [error('a')]
+  ,
+    # flowMax()
+    code: '''
+      const Foo = flowMax(
+        addProps({a: 'b'}),
+        ({a}) => <div>{a}</div>
+      )
+
+      Foo.propTypes = {
+        a: 'string',
+      }
+    '''
+    output: '''
+      const Foo = flowMax(
+        addProps({a: 'b'}),
+        ({a}) => <div>{a}</div>
+      )
+
+      Foo.propTypes = {
+        a: PropTypes.string,
+      }
+    '''
+    errors: [error('a')]
   ]
 
 config =
