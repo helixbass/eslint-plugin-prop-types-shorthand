@@ -264,6 +264,45 @@ tests =
     '''
     errors: [error('a')]
   ,
+    # addPropTypes()
+    code: '''
+      const Foo = flowMax(
+        addProps({a: 'b'}),
+        addPropTypes({
+          a: 'string',
+        }),
+        ({a}) => <div>{a}</div>
+      )
+    '''
+    output: '''
+      const Foo = flowMax(
+        addProps({a: 'b'}),
+        addPropTypes({
+          a: PropTypes.string,
+        }),
+        ({a}) => <div>{a}</div>
+      )
+    '''
+    errors: [error('a')]
+  ,
+    # setPropTypes()
+    code: '''
+      const enhance = compose(
+        withProps({a: 'b'}),
+        setPropTypes({
+          a: 'string',
+        }),
+      )
+    '''
+    output: '''
+      const enhance = compose(
+        withProps({a: 'b'}),
+        setPropTypes({
+          a: PropTypes.string,
+        }),
+      )
+    '''
+    errors: [error('a')]
   ]
 
 config =

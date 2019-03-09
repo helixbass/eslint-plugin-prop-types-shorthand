@@ -48,3 +48,12 @@ module.exports =
     'Program:exit': ->
       list = components.list()
       checkPropTypes(component) for _, component of list
+
+    CallExpression: ({callee, arguments: args}) ->
+      return unless callee.name in ['addPropTypes', 'setPropTypes']
+      return unless args.length > 0
+      [propTypes] = args
+      return unless propTypes.type is 'ObjectExpression'
+      checkPropTypes
+        declaredPropTypes:
+          {name: property.key.name, node: property} for property in propTypes.properties when property.key.type is 'Identifier'
