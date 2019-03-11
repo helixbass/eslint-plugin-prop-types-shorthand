@@ -71,4 +71,4 @@ module.exports =
       return unless isPropTypesInFlow(node) or isPropTypesInAssignment node
       checkPropTypes
         declaredPropTypes:
-          {name: property.key.name, node: property} for property in node.properties when property.key.type is 'Identifier'
+          {name: property.key.name, node: property} for property in node.properties when property.key?.type is 'Identifier'
