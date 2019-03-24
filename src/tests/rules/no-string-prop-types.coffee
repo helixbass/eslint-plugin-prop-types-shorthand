@@ -349,6 +349,59 @@ tests =
       }
     '''
     errors: [error('a')]
+  ,
+    # oneOfType
+    code: '''
+      const Foo = ({a}) => <div>{a}</div>
+
+      Foo.propTypes = {
+        a: 'number | {b: string}',
+      }
+    '''
+    output: '''
+      const Foo = ({a}) => <div>{a}</div>
+
+      Foo.propTypes = {
+        a: PropTypes.oneOfType([PropTypes.number, PropTypes.shape({b: PropTypes.string})]),
+      }
+    '''
+    errors: [error('a')]
+  ,
+    # required oneOfType
+    code: '''
+      const Foo = ({a}) => <div>{a}</div>
+
+      Foo.propTypes = {
+        a: '(number | {b: string})!',
+      }
+    '''
+    output: '''
+      const Foo = ({a}) => <div>{a}</div>
+
+      Foo.propTypes = {
+        a: PropTypes.oneOfType([PropTypes.number, PropTypes.shape({b: PropTypes.string})]).isRequired,
+      }
+    '''
+    errors: [error('a')]
+  ,
+    # oneOfType as shape property
+    code: '''
+      const Foo = ({a}) => <div>{a}</div>
+
+      Foo.propTypes = {
+        a: `{
+          b: number | string
+        }`,
+      }
+    '''
+    output: '''
+      const Foo = ({a}) => <div>{a}</div>
+
+      Foo.propTypes = {
+        a: PropTypes.shape({b: PropTypes.oneOfType([PropTypes.number, PropTypes.string])}),
+      }
+    '''
+    errors: [error('a')]
   ]
 
 config =

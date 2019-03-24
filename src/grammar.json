@@ -12,6 +12,9 @@
       ["\\}", "return '}'"],
       [":", "return ':'"],
       [",", "return ','"],
+      ["\\|", "return '|'"],
+      ["\\(", "return '('"],
+      ["\\)", "return ')'"],
       ["$", "return 'EOF'"]
     ]
   },
@@ -25,7 +28,7 @@
       ["Property", "$$ = [$1]"],
       ["Properties , Property", "$$ = $1.concat($3)"]
     ],
-    "e": [
+    "SingleExpression": [
       ["NAME OptRequired", "$$ = new yy.Type({name: $1, required: $2})"],
       ["[] OptRequired", "$$ = new yy.Type({name: 'array', required: $2})"],
       ["[ e ] OptRequired", "$$ = new yy.ArrayOf({inner: $2, required: $4})"],
@@ -33,6 +36,21 @@
       [
         "{ Properties OptTrailingComma } OptRequired",
         "$$ = new yy.Shape({properties: $2, required: $5})"
+      ]
+    ],
+    "OneOfTypesOpt": [
+      ["SingleExpression", "$$ = [$1]"],
+      ["SingleExpression | OneOfTypesOpt", "$$ = ($3.unshift($1), $3)"]
+    ],
+    "OneOfTypes": [
+      ["SingleExpression | OneOfTypesOpt", "$$ = ($3.unshift($1), $3)"]
+    ],
+    "e": [
+      ["SingleExpression", "$$ = $1"],
+      ["OneOfTypes", "$$ = new yy.OneOfType({types: $1})"],
+      [
+        "( OneOfTypes ) OptRequired",
+        "$$ = new yy.OneOfType({types: $2, required: $4})"
       ]
     ]
   }

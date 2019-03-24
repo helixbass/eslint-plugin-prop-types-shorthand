@@ -24,4 +24,12 @@ class Shape
       (property.print() for property in @properties).join(', ')
     }})#{if @required then '.isRequired' else ''}"
 
-module.exports = {Type, ArrayOf, Property, Shape}
+class OneOfType
+  constructor: ({@types, @required}) ->
+
+  print: ->
+    "PropTypes.oneOfType([#{
+      (type.print() for type in @types).join(', ')
+    }])#{if @required then '.isRequired' else ''}"
+
+module.exports = {Type, ArrayOf, Property, Shape, OneOfType}
